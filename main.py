@@ -15,6 +15,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def setup_picture(self):
         self.actionOpen_File.triggered.connect(self.openFile)
+        self.actionSave_File.triggered.connect(self.saveFile)
         self.action_information.triggered.connect(self.information)
         self.actionROI.triggered.connect(self.select_ROI)
         self.actionimageHistogram.triggered.connect(self.pictureHistogram)
@@ -35,6 +36,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.action_flip.triggered.connect(self.flip)
         self.action_affline.triggered.connect(self.affline)
         self.action_perspective.triggered.connect(self.label_mouse_Event)
+        self.perspective_pst_dst = []
+        self.perspective_counter = 4
 
     def label_mouse_Event(self):
         self.originalImage.mousePressEvent = self.mousepress
@@ -48,10 +51,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.x0, self.y0 = event.x(), event.y()
 
     def openFile(self):
-        filename, _ = QFileDialog.getOpenFileName(self, 'Open Image', 'Image', '*.jpg *.png *.bmp')
-        self.img = filename
+        self.filename, _ = QFileDialog.getOpenFileName(self, 'Open Image', 'Image', '*.jpg *.png *.bmp')
+        self.img = self.filename
         self.abspath = os.path.abspath(self.img)
         self.showImage()
+
+    def saveFile(self):
+        if self.filename == "":
+            self.imageShape.setText('無檔案儲存')
+            return 0
+        else:
+            savepath, file_type = QtWidgets.QFileDialog.getSaveFileName(self, "Image_Save", 'Image', '*.jpg *.png *.bmp')
+            if savepath == "":
+                self.imageShape.setText('取消檔案儲存')
+                return 0
+            else:
+                cv.imwrite(savepath, self.change_img)
+                self.imageShape.setText('檔案儲存')
 
     def information(self):
         height, width, channel = self.originalimg.shape
@@ -98,6 +114,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qImg = QImage(equalize_image, width, height, bytesPerline, QImage.Format_Grayscale8).rgbSwapped()
         self.qpixmap = QPixmap.fromImage(self.qImg)
         self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+        self.change_img = equalize_image
         plt.hist(equalize_image.ravel(), 256, [0, 256])
         plt.title('Equalize Image')
         plt.show()
@@ -109,6 +126,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qImg = QImage(gray, width, height, bytesPerline, QImage.Format_Grayscale8).rgbSwapped()
         self.qpixmap = QPixmap.fromImage(self.qImg)
         self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+        self.change_img = gray
 
     def imageHSV(self):
         hsv = cv.cvtColor(self.originalimg, cv.COLOR_BGR2HSV)
@@ -117,6 +135,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qImg = QImage(hsv, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
         self.qpixmap = QPixmap.fromImage(self.qImg)
         self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+        self.change_img = hsv
 
     def pictureThresholding(self):
         gray = cv.cvtColor(self.originalimg, cv.COLOR_BGR2GRAY)
@@ -126,6 +145,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qImg = QImage(thresholding, width, height, bytesPerline, QImage.Format_Grayscale8).rgbSwapped()
         self.qpixmap = QPixmap.fromImage(self.qImg)
         self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+        self.change_img = thresholding
 
     def adjustThreshold(self):
         self.thresholdinglabel.setText(str(self.thresholding_slider.value()))
@@ -140,6 +160,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qImg = QImage(img_averaging, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
         self.qpixmap = QPixmap.fromImage(self.qImg)
         self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+        self.change_img = img_averaging
 
     def sobel(self):
         x = cv.Sobel(self.originalimg, cv.CV_16S, 1, 0)
@@ -152,6 +173,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qImg = QImage(img_sobel, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
         self.qpixmap = QPixmap.fromImage(self.qImg)
         self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+        self.change_img = img_sobel
 
     def median(self):
         img_median = cv.medianBlur(self.originalimg, 11)
@@ -160,6 +182,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qImg = QImage(img_median, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
         self.qpixmap = QPixmap.fromImage(self.qImg)
         self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+        self.change_img = img_median
 
     def gaussian(self):
         img_gaussian = cv.GaussianBlur(self.originalimg, (11, 11), -1)
@@ -168,6 +191,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qImg = QImage(img_gaussian, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
         self.qpixmap = QPixmap.fromImage(self.qImg)
         self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+        self.change_img = img_gaussian
 
     def bilateral(self):
         img_bilateral = cv.bilateralFilter(self.originalimg, 9, 100, 15)
@@ -176,6 +200,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qImg = QImage(img_bilateral, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
         self.qpixmap = QPixmap.fromImage(self.qImg)
         self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+        self.change_img = img_bilateral
 
     def laplacian(self):
         gray_lap = cv.Laplacian(self.originalimg, cv.CV_16S, ksize=3)
@@ -185,6 +210,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qImg = QImage(img_laplacian, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
         self.qpixmap = QPixmap.fromImage(self.qImg)
         self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+        self.change_img = img_laplacian
 
     def rotate(self):
         height, width, channel = self.originalimg.shape
@@ -195,6 +221,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qImg = QImage(img_rotate, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
         self.qpixmap = QPixmap.fromImage(self.qImg)
         self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+        self.change_img = img_rotate
 
     def translation(self):
         rightleft = int(self.rightleft_textEdit.toPlainText())
@@ -206,6 +233,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qImg = QImage(img_shifted, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
         self.qpixmap = QPixmap.fromImage(self.qImg)
         self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+        self.change_img = img_shifted
 
     def flip(self):
         flip = int(self.flip_textEdit.toPlainText())
@@ -215,6 +243,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qImg = QImage(flip_img, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
         self.qpixmap = QPixmap.fromImage(self.qImg)
         self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+        self.change_img = flip_img
 
     def affline(self):
         rightleft = int(self.rightleft_textEdit.toPlainText())
@@ -232,16 +261,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qImg = QImage(img_affline, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
         self.qpixmap = QPixmap.fromImage(self.qImg)
         self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+        self.change_img = img_affline
 
     def perspective(self):
-        height, width = self.originalimg.shape[:2]
         originalimg = self.originalimg
         self.perspective_pst_dst = np.array(self.perspective_pst_dst, dtype=np.float32)
-        mapping_matrix = cv.getPerspectiveTransform(self.perspective_pst_src, self.perspective_pst_dst)
-        img_transformed = cv.warpPerspective(originalimg, mapping_matrix, (width, height))
+        mapping_matrix, status = cv.findHomography(self.perspective_pst_src, self.perspective_pst_dst)
+        img_transformed = cv.warpPerspective(originalimg, mapping_matrix, (originalimg.shape[1], originalimg.shape[0]))
         return img_transformed
 
-    def perspectiveTramsformClicked(self):
+    def perspective_get_clicked_position(self, event):
         height, width = self.originalimg.shape[:2]
         self.perspective_pst_src = np.array([
             [0, 0],
@@ -249,24 +278,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             [0, height - 1],
             [width - 1, height - 1]
         ], dtype=np.float32)
-        self.perspective_pst_dst = []
-        self.perspective_counter = 4
 
-    def perspective_get_clicked_position(self, event):
-        self.perspectiveTramsformClicked()
         if self.perspective_counter > 0:
-            self.imageSize.setText(f"X = {event.x()} Y = {event.y()}")
             self.imageShape.setText('')
             self.imagePath.setText('')
             self.x, self.y = event.x(), event.y()
             self.perspective_pst_dst.append([self.x, self.y])
+            self.imageSize.setText(str(self.perspective_pst_dst[:]))
             self.perspective_counter -= 1
-        if self.perspective_counter == 0:
-            transform_image = self.perspective()
-            transform_image = cv.cvtColor(transform_image, cv.COLOR_BGR2RGB)
-            plt.imshow(transform_image)
-            plt.axis('off')
-            plt.show()
+            if self.perspective_counter == 0:
+                transform_image = self.perspective()
+                transform_image = cv.cvtColor(transform_image, cv.COLOR_BGR2RGB)
+                plt.imshow(transform_image)
+                plt.axis('off')
+                plt.show()
+                self.perspective_pst_dst =[]
+                self.perspective_counter = 4
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
