@@ -1,9 +1,9 @@
 # imageprocessingplatform
 ```
 1.Menu bar:
-    2.檔案:
+    1.檔案:
         開啟檔案:可開啟jpg和png副檔名的圖片
-    3.設定:
+    2.設定:
         選擇ROI區域
         顯示影像直方圖
         改變色彩空間:RGB轉灰階，RGB轉HSV
