@@ -242,7 +242,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for i in range(dst_norm.shape[0]):
             for j in range(dst_norm.shape[1]):
                 if int(dst_norm[i, j]) > self.harrisSlider.value():
-                    cv.circle(dst_norm_scaled,(j,i), 5, 0, 2)
+                    cv.circle(dst_norm_scaled, (j, i), 5, (0), 2)
         self.set_gray_label(dst_norm_scaled)
 
 if __name__ == '__main__':
