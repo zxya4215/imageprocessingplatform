@@ -1,2 +1,2 @@
 # imageprocessingplatform
-新增harris corner以拉桿來使用
+新增erosion和dilation以拉桿來選擇kernelsize，在使用menu中的按鈕來執行
