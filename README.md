@@ -1,5 +1,8 @@
 # imageprocessingplatform
 ```
+使用環境
+    1.使用平台:python3.8
+    2.使用套件:opencv, numpy, matplotlib, PyQt5
 1.Menu bar:
     1.檔案:
         開啟檔案:可開啟jpg和png副檔名的圖片
