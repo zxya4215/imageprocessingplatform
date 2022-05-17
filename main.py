@@ -2,9 +2,12 @@ import sys, os
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
+import changecolor
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow
-from PyQt5.QtCore import *
+
+import filter
+import histogram
 from design import *
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -26,16 +29,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.imageThresholding.clicked.connect(self.pictureThresholding)
         self.thresholding_slider.valueChanged[int].connect(self.adjustThreshold)
         self.angle_Slider.valueChanged[int].connect(self.adjustThreshold)
-        self.action_averaging.triggered.connect(self.averaging)
-        self.action_sobel.triggered.connect(self.sobel)
-        self.action_median.triggered.connect(self.median)
-        self.action_gaussian.triggered.connect(self.gaussian)
-        self.action_bilateral.triggered.connect(self.bilateral)
-        self.action_laplacian.triggered.connect(self.laplacian)
-        self.action_translation.triggered.connect(self.translation)
-        self.action_flip.triggered.connect(self.flip)
-        self.action_affline.triggered.connect(self.affline)
-        self.action_perspective.triggered.connect(self.label_mouse_Event)
+        self.action_averaging_2.triggered.connect(self.averaging)
+        self.action_sobel_2.triggered.connect(self.sobel)
+        self.action_median_2.triggered.connect(self.median)
+        self.action_gaussian_2.triggered.connect(self.gaussian)
+        self.action_bilateral_2.triggered.connect(self.bilateral)
+        self.action_laplacian_2.triggered.connect(self.laplacian)
+        self.action_translation_2.triggered.connect(self.translation)
+        self.action_flip_2.triggered.connect(self.flip)
+        self.action_affline_2.triggered.connect(self.affline)
+        self.action_rotate_2.triggered.connect(self.rotate)
+        self.action_perspective_2.triggered.connect(self.label_mouse_Event)
+        self.harrisSlider.valueChanged[int].connect(self.harriscorner)
         self.perspective_pst_dst = []
         self.perspective_counter = 4
 
@@ -49,6 +54,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def mousepress(self, event):
         self.x0, self.y0 = event.x(), event.y()
+
+    def set_rgb_label(self, img):
+        height, width, channel = img.shape
+        bytesPerline = 3 * width
+        self.qImg = QImage(img, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
+        self.qpixmap = QPixmap.fromImage(self.qImg)
+        self.qpixmap_height = self.qpixmap.height()
+        self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+
+    def set_gray_label(self, img):
+        height, width = img.shape
+        bytesPerline = 1 * width
+        self.qImg = QImage(img, width, height, bytesPerline, QImage.Format_Grayscale8).rgbSwapped()
+        self.qpixmap = QPixmap.fromImage(self.qImg)
+        self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
 
     def openFile(self):
         self.filename, _ = QFileDialog.getOpenFileName(self, 'Open Image', 'Image', '*.jpg *.png *.bmp')
@@ -72,7 +92,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def information(self):
         height, width, channel = self.originalimg.shape
         self.imageShape.setText('影像大小: ' + str(width) + ' X ' + str(height))
-        self.imagePath.setText(self.abspath)
+        self.imagePath.setText('影像位置： ' + str(self.abspath))
         self.imageSize.setText('圖檔大小: ' + str(round(os.stat(self.abspath).st_size/1e+6, 3)) + 'MB')
 
     def showImage(self):
@@ -89,63 +109,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.originalImage.setPixmap(scaled_pixmap)
 
     def select_ROI(self):
-        img = self.originalimg
-        showCrosshair = False
-        fromCenter = False
-        r = cv.selectROI("image", img, showCrosshair, fromCenter)
-        imgCrop = img[int(r[1]): int(r[1] + r[3]), int(r[0]):int(r[0] + r[2])]
-        cv.imshow("ROI_selection", imgCrop)
-        cv.waitKey(0)
+        changecolor.select_roi(self.originalimg)
 
     def pictureHistogram(self):
-        color = ('b', 'g', 'r')
-        for i, col in enumerate(color):
-            histr = cv.calcHist([self.originalimg], [i], None, [256], [0, 256])
-            plt.plot(histr, color=col)
-            plt.xlim([0, 256])
-        plt.title('Histogram Image')
-        plt.show()
+        changecolor.histogram(self.originalimg)
 
     def histogramEqualization(self):
-        gray = cv.cvtColor(self.originalimg, cv.COLOR_BGR2GRAY)
-        equalize_image = cv.equalizeHist(gray)
-        height, width = gray.shape
-        bytesPerline = 1 * width
-        self.qImg = QImage(equalize_image, width, height, bytesPerline, QImage.Format_Grayscale8).rgbSwapped()
-        self.qpixmap = QPixmap.fromImage(self.qImg)
-        self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
-        self.change_img = equalize_image
-        plt.hist(equalize_image.ravel(), 256, [0, 256])
-        plt.title('Equalize Image')
-        plt.show()
+        gray = changecolor.image_Gray(self.originalimg)
+        histogram.histogramequalization(gray)
+        self.set_gray_label(gray)
 
     def imageGary(self):
-        gray = cv.cvtColor(self.originalimg, cv.COLOR_BGR2GRAY)
-        height, width = gray.shape
-        bytesPerline = 1 * width
-        self.qImg = QImage(gray, width, height, bytesPerline, QImage.Format_Grayscale8).rgbSwapped()
-        self.qpixmap = QPixmap.fromImage(self.qImg)
-        self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
-        self.change_img = gray
+        gray = changecolor.image_Gray(self.originalimg)
+        self.set_gray_label(gray)
 
     def imageHSV(self):
-        hsv = cv.cvtColor(self.originalimg, cv.COLOR_BGR2HSV)
-        height, width, channel = self.originalimg.shape
-        bytesPerline = 3 * width
-        self.qImg = QImage(hsv, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
-        self.qpixmap = QPixmap.fromImage(self.qImg)
-        self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
-        self.change_img = hsv
+        hsv = changecolor.image_HSV(self.originalimg)
+        self.set_rgb_label(hsv)
 
     def pictureThresholding(self):
         gray = cv.cvtColor(self.originalimg, cv.COLOR_BGR2GRAY)
         ret, thresholding = cv.threshold(gray, self.thresholding_slider.value(), 255, cv.THRESH_BINARY)
-        height, width = gray.shape
-        bytesPerline = 1 * width
-        self.qImg = QImage(thresholding, width, height, bytesPerline, QImage.Format_Grayscale8).rgbSwapped()
-        self.qpixmap = QPixmap.fromImage(self.qImg)
-        self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
-        self.change_img = thresholding
+        self.set_gray_label(thresholding)
 
     def adjustThreshold(self):
         self.thresholdinglabel.setText(str(self.thresholding_slider.value()))
@@ -154,74 +139,35 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.action_rotate.triggered.connect(self.rotate)
 
     def averaging(self):
-        img_averaging = cv.blur(self.originalimg, (11, 11))
-        height, width, channel = self.originalimg.shape
-        bytesPerline = 3 * width
-        self.qImg = QImage(img_averaging, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
-        self.qpixmap = QPixmap.fromImage(self.qImg)
-        self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
-        self.change_img = img_averaging
+        img_averaging = filter.averaging(self.originalimg)
+        self.set_rgb_label(img_averaging)
 
     def sobel(self):
-        x = cv.Sobel(self.originalimg, cv.CV_16S, 1, 0)
-        y = cv.Sobel(self.originalimg, cv.CV_16S, 0, 1)
-        absX = cv.convertScaleAbs(x)
-        absY = cv.convertScaleAbs(y)
-        img_sobel = cv.addWeighted(absX, 0.5, absY, 0.5, 0)
-        height, width, channel = self.originalimg.shape
-        bytesPerline = 3 * width
-        self.qImg = QImage(img_sobel, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
-        self.qpixmap = QPixmap.fromImage(self.qImg)
-        self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
-        self.change_img = img_sobel
+        img_sobel = filter.sobel(self.originalimg)
+        self.set_rgb_label(img_sobel)
 
     def median(self):
-        img_median = cv.medianBlur(self.originalimg, 11)
-        height, width, channel = self.originalimg.shape
-        bytesPerline = 3 * width
-        self.qImg = QImage(img_median, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
-        self.qpixmap = QPixmap.fromImage(self.qImg)
-        self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
-        self.change_img = img_median
+        img_median = filter.median(self.originalimg)
+        self.set_rgb_label(img_median)
 
     def gaussian(self):
-        img_gaussian = cv.GaussianBlur(self.originalimg, (11, 11), -1)
-        height, width, channel = self.originalimg.shape
-        bytesPerline = 3 * width
-        self.qImg = QImage(img_gaussian, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
-        self.qpixmap = QPixmap.fromImage(self.qImg)
-        self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
-        self.change_img = img_gaussian
+        img_gaussian = filter.gaussian(self.originalimg)
+        self.set_rgb_label(img_gaussian)
 
     def bilateral(self):
-        img_bilateral = cv.bilateralFilter(self.originalimg, 9, 100, 15)
-        height, width, channel = self.originalimg.shape
-        bytesPerline = 3 * width
-        self.qImg = QImage(img_bilateral, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
-        self.qpixmap = QPixmap.fromImage(self.qImg)
-        self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
-        self.change_img = img_bilateral
+        img_bilateral = filter.bilateral(self.originalimg)
+        self.set_rgb_label(img_bilateral)
 
     def laplacian(self):
-        gray_lap = cv.Laplacian(self.originalimg, cv.CV_16S, ksize=3)
-        img_laplacian = cv.convertScaleAbs(gray_lap)
-        height, width, channel = self.originalimg.shape
-        bytesPerline = 3 * width
-        self.qImg = QImage(img_laplacian, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
-        self.qpixmap = QPixmap.fromImage(self.qImg)
-        self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
-        self.change_img = img_laplacian
+        img_laplacian = filter.laplacian(self.originalimg)
+        self.set_rgb_label(img_laplacian)
 
     def rotate(self):
         height, width, channel = self.originalimg.shape
         #cv.getRotationMatrix2D(中心點座標, 旋轉的角度, 圖片的縮放倍率)
         matrix = cv.getRotationMatrix2D((width / 2.0, height / 2.0), self.angle_Slider.value(), 1)
         img_rotate = cv.warpAffine(self.originalimg, matrix, (width, height))
-        bytesPerline = 3 * width
-        self.qImg = QImage(img_rotate, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
-        self.qpixmap = QPixmap.fromImage(self.qImg)
-        self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
-        self.change_img = img_rotate
+        self.set_rgb_label(img_rotate)
 
     def translation(self):
         rightleft = int(self.rightleft_textEdit.toPlainText())
@@ -229,21 +175,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         matrix = np.float32([[1, 0, rightleft], [0, 1, toplower]])
         height, width, channel = self.originalimg.shape
         img_shifted = cv.warpAffine(self.originalimg, matrix, (width, height))
-        bytesPerline = 3 * width
-        self.qImg = QImage(img_shifted, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
-        self.qpixmap = QPixmap.fromImage(self.qImg)
-        self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
-        self.change_img = img_shifted
+        self.set_rgb_label(img_shifted)
 
     def flip(self):
         flip = int(self.flip_textEdit.toPlainText())
-        flip_img = cv.flip(self.originalimg, flip)
-        height, width, channel = self.originalimg.shape
-        bytesPerline = 3 * width
-        self.qImg = QImage(flip_img, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
-        self.qpixmap = QPixmap.fromImage(self.qImg)
-        self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
-        self.change_img = flip_img
+        img_flip = cv.flip(self.originalimg, flip)
+        self.set_rgb_label(img_flip)
 
     def affline(self):
         rightleft = int(self.rightleft_textEdit.toPlainText())
@@ -257,27 +194,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         matrix = np.float32([[1, zoom_rightleft, rightleft], [zoom_toplower, 1, toplower]])
         height, width, channel = self.originalimg.shape
         img_affline = cv.warpAffine(self.originalimg, matrix, (width, height))
-        bytesPerline = 3 * width
-        self.qImg = QImage(img_affline, width, height, bytesPerline, QImage.Format_RGB888).rgbSwapped()
-        self.qpixmap = QPixmap.fromImage(self.qImg)
-        self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
-        self.change_img = img_affline
-
-    def perspective(self):
-        originalimg = self.originalimg
-        self.perspective_pst_dst = np.array(self.perspective_pst_dst, dtype=np.float32)
-        mapping_matrix, status = cv.findHomography(self.perspective_pst_src, self.perspective_pst_dst)
-        img_transformed = cv.warpPerspective(originalimg, mapping_matrix, (originalimg.shape[1], originalimg.shape[0]))
-        return img_transformed
+        self.set_rgb_label(img_affline)
 
     def perspective_get_clicked_position(self, event):
-        height, width = self.originalimg.shape[:2]
-        self.perspective_pst_src = np.array([
+        displayed_size = self.originalImage.size()
+        width, height = displayed_size.width(), displayed_size.height()
+        displayed_image = cv.resize(self.originalimg, (width, height), interpolation=cv.INTER_AREA)
+        self.perspective_pst_src = np.float32([
             [0, 0],
-            [width - 1, 0],
-            [0, height - 1],
-            [width - 1, height - 1]
-        ], dtype=np.float32)
+            [width, 0],
+            [0, height],
+            [width, height]
+        ])
 
         if self.perspective_counter > 0:
             self.imageShape.setText('')
@@ -287,13 +215,35 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.imageSize.setText(str(self.perspective_pst_dst[:]))
             self.perspective_counter -= 1
             if self.perspective_counter == 0:
-                transform_image = self.perspective()
-                transform_image = cv.cvtColor(transform_image, cv.COLOR_BGR2RGB)
+                self.perspective_pst_dst = np.float32(self.perspective_pst_dst)
+                mapping_matrix = cv.getPerspectiveTransform(self.perspective_pst_dst, self.perspective_pst_src)
+                img_transformed = cv.warpPerspective(displayed_image, mapping_matrix, (width, height), cv.INTER_LINEAR)
+                transform_image = cv.cvtColor(img_transformed, cv.COLOR_BGR2RGB)
                 plt.imshow(transform_image)
                 plt.axis('off')
                 plt.show()
-                self.perspective_pst_dst =[]
+                self.perspective_pst_dst = []
                 self.perspective_counter = 4
+
+    def harriscorner(self):
+        self.harrislabel.setText(str(self.harrisSlider.value()))
+        gray = changecolor.image_Gray(self.originalimg)
+        #設定參數
+        blockSize = 2
+        apertureSize = 3
+        k = 0.04
+        #檢測
+        dst = cv.cornerHarris(gray, blockSize, apertureSize, k)
+        #normalizing
+        dst_norm = np.empty(dst.shape, dtype=np.float32)
+        cv.normalize(dst, dst_norm, alpha=0, beta=255, norm_type=cv.NORM_MINMAX)
+        dst_norm_scaled = cv.convertScaleAbs(dst_norm)
+
+        for i in range(dst_norm.shape[0]):
+            for j in range(dst_norm.shape[1]):
+                if int(dst_norm[i, j]) > self.harrisSlider.value():
+                    cv.circle(dst_norm_scaled,(j,i), 5, 0, 2)
+        self.set_gray_label(dst_norm_scaled)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
