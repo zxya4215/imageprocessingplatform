@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>557</width>
-    <height>457</height>
+    <width>630</width>
+    <height>490</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_12">
+   <layout class="QGridLayout" name="gridLayout_15">
     <item row="1" column="0">
      <layout class="QGridLayout" name="gridLayout">
       <item row="1" column="0">
@@ -140,74 +140,134 @@
      </layout>
     </item>
     <item row="3" column="0" colspan="2">
-     <layout class="QGridLayout" name="gridLayout_11">
-      <item row="0" column="0">
-       <layout class="QGridLayout" name="gridLayout_7">
+     <layout class="QGridLayout" name="gridLayout_14">
+      <item row="0" column="0" colspan="2">
+       <layout class="QGridLayout" name="gridLayout_11">
         <item row="0" column="0">
-         <widget class="QLabel" name="harris_corner">
-          <property name="text">
-           <string>哈里斯邊角偵測</string>
-          </property>
-         </widget>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="0" column="0">
+           <widget class="QLabel" name="harris_corner">
+            <property name="text">
+             <string>哈里斯邊角偵測</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSlider" name="harrisSlider">
+            <property name="maximum">
+             <number>255</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="harrislabel">
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item row="0" column="1">
-         <widget class="QSlider" name="harrisSlider">
-          <property name="maximum">
-           <number>255</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="0">
+           <widget class="QLabel" name="element">
+            <property name="text">
+             <string>element</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSlider" name="elementSlider">
+            <property name="maximum">
+             <number>2</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="element_val">
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="harrislabel">
-          <property name="text">
-           <string>0</string>
-          </property>
-         </widget>
+        <item row="1" column="0">
+         <layout class="QGridLayout" name="gridLayout_9">
+          <item row="0" column="0">
+           <widget class="QLabel" name="erosion">
+            <property name="text">
+             <string>侵蝕</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSlider" name="erosionSlider">
+            <property name="maximum">
+             <number>21</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="erosion_val">
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
-       </layout>
-      </item>
-      <item row="0" column="1">
-       <layout class="QGridLayout" name="gridLayout_8">
-        <item row="0" column="0">
-         <widget class="QLabel" name="element">
-          <property name="text">
-           <string>element</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QSlider" name="elementSlider">
-          <property name="maximum">
-           <number>2</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="element_val">
-          <property name="text">
-           <string>0</string>
-          </property>
-         </widget>
+        <item row="1" column="1">
+         <layout class="QGridLayout" name="gridLayout_10">
+          <item row="0" column="0">
+           <widget class="QLabel" name="dilation">
+            <property name="text">
+             <string>膨脹</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSlider" name="dilationSlider">
+            <property name="maximum">
+             <number>21</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="dilation_val">
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
       <item row="1" column="0">
-       <layout class="QGridLayout" name="gridLayout_9">
+       <layout class="QGridLayout" name="gridLayout_12">
         <item row="0" column="0">
-         <widget class="QLabel" name="erosion">
+         <widget class="QLabel" name="opening_2">
           <property name="text">
-           <string>侵蝕</string>
+           <string>開運算</string>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QSlider" name="erosionSlider">
+         <widget class="QSlider" name="openingSlider">
           <property name="maximum">
            <number>21</number>
           </property>
@@ -217,7 +277,7 @@
          </widget>
         </item>
         <item row="0" column="2">
-         <widget class="QLabel" name="erosion_val">
+         <widget class="QLabel" name="opening_val">
           <property name="text">
            <string>0</string>
           </property>
@@ -226,16 +286,16 @@
        </layout>
       </item>
       <item row="1" column="1">
-       <layout class="QGridLayout" name="gridLayout_10">
+       <layout class="QGridLayout" name="gridLayout_13">
         <item row="0" column="0">
-         <widget class="QLabel" name="dilation">
+         <widget class="QLabel" name="closing_2">
           <property name="text">
-           <string>膨脹</string>
+           <string>閉運算</string>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QSlider" name="dilationSlider">
+         <widget class="QSlider" name="closingSlider">
           <property name="maximum">
            <number>21</number>
           </property>
@@ -245,7 +305,7 @@
          </widget>
         </item>
         <item row="0" column="2">
-         <widget class="QLabel" name="dilation_val">
+         <widget class="QLabel" name="closing_val">
           <property name="text">
            <string>0</string>
           </property>
@@ -287,20 +347,10 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="8">
-       <widget class="QLabel" name="angle_7">
+      <item row="0" column="3">
+       <widget class="QLabel" name="angle_4">
         <property name="text">
          <string>上下</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="6">
-       <widget class="QLabel" name="angle_6">
-        <property name="text">
-         <string>左右</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -317,6 +367,26 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="5">
+       <widget class="QLabel" name="angle_8">
+        <property name="text">
+         <string>縮放比例：</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="6">
+       <widget class="QLabel" name="angle_6">
+        <property name="text">
+         <string>左右</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="7">
        <widget class="QTextEdit" name="zoom_rightleft_textEdit">
         <property name="maximumSize">
@@ -327,18 +397,8 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="9">
-       <widget class="QTextEdit" name="zoom_toplower_textEdit">
-        <property name="maximumSize">
-         <size>
-          <width>50</width>
-          <height>30</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
-       <widget class="QLabel" name="angle_4">
+      <item row="0" column="8">
+       <widget class="QLabel" name="angle_7">
         <property name="text">
          <string>上下</string>
         </property>
@@ -347,13 +407,13 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="5">
-       <widget class="QLabel" name="angle_8">
-        <property name="text">
-         <string>縮放比例：</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
+      <item row="0" column="9">
+       <widget class="QTextEdit" name="zoom_toplower_textEdit">
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>30</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -414,7 +474,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>557</width>
+     <width>630</width>
      <height>25</height>
     </rect>
    </property>
@@ -471,6 +531,8 @@
      </property>
      <addaction name="action_erosion"/>
      <addaction name="action_dilation"/>
+     <addaction name="opening"/>
+     <addaction name="closing"/>
     </widget>
     <addaction name="menu_6"/>
     <addaction name="action_perspective_2"/>
@@ -644,6 +706,16 @@
   <action name="action_dilation">
    <property name="text">
     <string>膨脹</string>
+   </property>
+  </action>
+  <action name="opening">
+   <property name="text">
+    <string>開運算</string>
+   </property>
+  </action>
+  <action name="closing">
+   <property name="text">
+    <string>閉運算</string>
    </property>
   </action>
  </widget>

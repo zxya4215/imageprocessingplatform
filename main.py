@@ -45,8 +45,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.elementSlider.valueChanged[int].connect(self.erosion_dilation_element)
         self.erosionSlider.valueChanged[int].connect(self.erosion_dilation_element)
         self.dilationSlider.valueChanged[int].connect(self.erosion_dilation_element)
+        self.openingSlider.valueChanged[int].connect(self.erosion_dilation_element)
+        self.closingSlider.valueChanged[int].connect(self.erosion_dilation_element)
         self.action_erosion.triggered.connect(self.img_erosion)
         self.action_dilation.triggered.connect(self.img_dilation)
+        self.opening.triggered.connect(self.img_opening)
+        self.closing.triggered.connect(self.img_closing)
         self.perspective_pst_dst = []
         self.perspective_counter = 4
 
@@ -255,6 +259,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.element_val.setText(str(self.elementSlider.value()))
         self.erosion_val.setText(str(self.erosionSlider.value()))
         self.dilation_val.setText(str(self.dilationSlider.value()))
+        self.opening_val.setText(str(self.openingSlider.value()))
+        self.closing_val.setText(str(self.closingSlider.value()))
 
     def img_erosion(self):
         erosion_shape = morph.morph_shape(self.elementSlider.value())
@@ -271,6 +277,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                            (self.dilationSlider.value(), self.dilationSlider.value()))
         dilation_dst = cv.erode(self.originalimg, element)
         self.set_rgb_label(dilation_dst)
+
+    def img_opening(self):
+        dilation_shape = morph.morph_shape(self.elementSlider.value())
+        element = cv.getStructuringElement(dilation_shape,
+                                           (2 * self.openingSlider.value() + 1, 2 * self.openingSlider.value() + 1),
+                                           (self.openingSlider.value(), self.openingSlider.value()))
+        opening_dst = cv.morphologyEx(self.originalimg, cv.MORPH_OPEN, element)
+        self.set_rgb_label(opening_dst)
+
+    def img_closing(self):
+        dilation_shape = morph.morph_shape(self.elementSlider.value())
+        element = cv.getStructuringElement(dilation_shape,
+                                           (2 * self.closingSlider.value() + 1, 2 * self.closingSlider.value() + 1),
+                                           (self.closingSlider.value(), self.closingSlider.value()))
+        closing_dst = cv.morphologyEx(self.originalimg, cv.MORPH_CLOSE, element)
+        self.set_rgb_label(closing_dst)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
