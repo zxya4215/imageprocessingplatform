@@ -6,36 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1011</width>
-    <height>642</height>
+    <width>557</width>
+    <height>457</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_8">
-    <item row="0" column="0">
-     <layout class="QGridLayout" name="gridLayout_4">
-      <item row="0" column="0">
-       <widget class="QLabel" name="originalImage">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="changeImage">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
+   <layout class="QGridLayout" name="gridLayout_12">
     <item row="1" column="0">
      <layout class="QGridLayout" name="gridLayout">
       <item row="1" column="0">
@@ -160,58 +139,119 @@
       </item>
      </layout>
     </item>
-    <item row="3" column="0">
-     <layout class="QGridLayout" name="gridLayout_7">
+    <item row="3" column="0" colspan="2">
+     <layout class="QGridLayout" name="gridLayout_11">
       <item row="0" column="0">
-       <widget class="QLabel" name="harris_corner">
-        <property name="text">
-         <string>哈里斯邊角偵測</string>
-        </property>
-       </widget>
+       <layout class="QGridLayout" name="gridLayout_7">
+        <item row="0" column="0">
+         <widget class="QLabel" name="harris_corner">
+          <property name="text">
+           <string>哈里斯邊角偵測</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSlider" name="harrisSlider">
+          <property name="maximum">
+           <number>255</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="harrislabel">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item row="0" column="1">
-       <widget class="QSlider" name="harrisSlider">
-        <property name="maximum">
-         <number>255</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
+       <layout class="QGridLayout" name="gridLayout_8">
+        <item row="0" column="0">
+         <widget class="QLabel" name="element">
+          <property name="text">
+           <string>element</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSlider" name="elementSlider">
+          <property name="maximum">
+           <number>2</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="element_val">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
-      <item row="0" column="2">
-       <widget class="QLabel" name="harrislabel">
-        <property name="text">
-         <string>0</string>
-        </property>
-       </widget>
+      <item row="1" column="0">
+       <layout class="QGridLayout" name="gridLayout_9">
+        <item row="0" column="0">
+         <widget class="QLabel" name="erosion">
+          <property name="text">
+           <string>侵蝕</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSlider" name="erosionSlider">
+          <property name="maximum">
+           <number>21</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="erosion_val">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
-     </layout>
-    </item>
-    <item row="5" column="0" colspan="2">
-     <layout class="QGridLayout" name="gridLayout_6">
-      <item row="0" column="1">
-       <widget class="QTextEdit" name="flip_textEdit">
-        <property name="maximumSize">
-         <size>
-          <width>50</width>
-          <height>30</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="angle_5">
-        <property name="maximumSize">
-         <size>
-          <width>450</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>翻轉：輸入方式(水平翻轉：1，垂直翻轉：0，水平垂直翻轉：-1)</string>
-        </property>
-       </widget>
+      <item row="1" column="1">
+       <layout class="QGridLayout" name="gridLayout_10">
+        <item row="0" column="0">
+         <widget class="QLabel" name="dilation">
+          <property name="text">
+           <string>膨脹</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSlider" name="dilationSlider">
+          <property name="maximum">
+           <number>21</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="dilation_val">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
@@ -319,6 +359,54 @@
       </item>
      </layout>
     </item>
+    <item row="5" column="0" colspan="2">
+     <layout class="QGridLayout" name="gridLayout_6">
+      <item row="0" column="1">
+       <widget class="QTextEdit" name="flip_textEdit">
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>30</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="angle_5">
+        <property name="maximumSize">
+         <size>
+          <width>450</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>翻轉：輸入方式(水平翻轉：1，垂直翻轉：0，水平垂直翻轉：-1)</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="0" colspan="2">
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="originalImage">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="changeImage">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -326,7 +414,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1011</width>
+     <width>557</width>
      <height>25</height>
     </rect>
    </property>
@@ -377,9 +465,17 @@
      <addaction name="action_flip_2"/>
      <addaction name="action_affline_2"/>
     </widget>
+    <widget class="QMenu" name="menu_4">
+     <property name="title">
+      <string>形態學</string>
+     </property>
+     <addaction name="action_erosion"/>
+     <addaction name="action_dilation"/>
+    </widget>
     <addaction name="menu_6"/>
     <addaction name="action_perspective_2"/>
     <addaction name="menu_3"/>
+    <addaction name="menu_4"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menu_2"/>
@@ -538,6 +634,16 @@
   <action name="action_affline_2">
    <property name="text">
     <string>仿射轉換</string>
+   </property>
+  </action>
+  <action name="action_erosion">
+   <property name="text">
+    <string>侵蝕</string>
+   </property>
+  </action>
+  <action name="action_dilation">
+   <property name="text">
+    <string>膨脹</string>
    </property>
   </action>
  </widget>

@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow
 
 import filter
 import histogram
+import morph
 from design import *
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -41,6 +42,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.action_rotate_2.triggered.connect(self.rotate)
         self.action_perspective_2.triggered.connect(self.label_mouse_Event)
         self.harrisSlider.valueChanged[int].connect(self.harriscorner)
+        self.elementSlider.valueChanged[int].connect(self.erosion_dilation_element)
+        self.erosionSlider.valueChanged[int].connect(self.erosion_dilation_element)
+        self.dilationSlider.valueChanged[int].connect(self.erosion_dilation_element)
+        self.action_erosion.triggered.connect(self.img_erosion)
+        self.action_dilation.triggered.connect(self.img_dilation)
         self.perspective_pst_dst = []
         self.perspective_counter = 4
 
@@ -244,6 +250,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if int(dst_norm[i, j]) > self.harrisSlider.value():
                     cv.circle(dst_norm_scaled, (j, i), 5, (0), 2)
         self.set_gray_label(dst_norm_scaled)
+
+    def erosion_dilation_element(self):
+        self.element_val.setText(str(self.elementSlider.value()))
+        self.erosion_val.setText(str(self.erosionSlider.value()))
+        self.dilation_val.setText(str(self.dilationSlider.value()))
+
+    def img_erosion(self):
+        erosion_shape = morph.morph_shape(self.elementSlider.value())
+        element = cv.getStructuringElement(erosion_shape,
+                                           (2 * self.erosionSlider.value() + 1, 2 * self.erosionSlider.value() + 1),
+                                           (self.erosionSlider.value(), self.erosionSlider.value()))
+        erosion_dst = cv.erode(self.originalimg, element)
+        self.set_rgb_label(erosion_dst)
+
+    def img_dilation(self):
+        dilation_shape = morph.morph_shape(self.elementSlider.value())
+        element = cv.getStructuringElement(dilation_shape,
+                                           (2 * self.dilationSlider.value() + 1, 2 * self.dilationSlider.value() + 1),
+                                           (self.dilationSlider.value(), self.dilationSlider.value()))
+        dilation_dst = cv.erode(self.originalimg, element)
+        self.set_rgb_label(dilation_dst)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
