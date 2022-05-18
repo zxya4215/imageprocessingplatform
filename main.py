@@ -122,7 +122,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         changecolor.select_roi(self.originalimg)
 
     def pictureHistogram(self):
-        changecolor.histogram(self.originalimg)
+        histogram.histogram(self.originalimg)
 
     def histogramEqualization(self):
         gray = changecolor.image_Gray(self.originalimg)
