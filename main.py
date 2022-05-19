@@ -72,6 +72,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qpixmap = QPixmap.fromImage(self.qImg)
         self.qpixmap_height = self.qpixmap.height()
         self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+        self.change_img = img
 
     def set_gray_label(self, img):
         height, width = img.shape
@@ -79,6 +80,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qImg = QImage(img, width, height, bytesPerline, QImage.Format_Grayscale8).rgbSwapped()
         self.qpixmap = QPixmap.fromImage(self.qImg)
         self.changeImage.setPixmap(QPixmap.fromImage(self.qImg))
+        self.change_img = img
 
     def openFile(self):
         self.filename, _ = QFileDialog.getOpenFileName(self, 'Open Image', 'Image', '*.jpg *.png *.bmp')
@@ -87,6 +89,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.showImage()
 
     def saveFile(self):
+        self.imagePath.setText("")
+        self.imageSize.setText("")
         if self.filename == "":
             self.imageShape.setText('無檔案儲存')
             return 0
